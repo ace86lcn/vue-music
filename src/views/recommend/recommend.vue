@@ -11,6 +11,12 @@
                         </div>
                     </slider>
                 </div>
+                <div class="recommend-list">
+                  <h1 class="list-title">热门歌单推荐</h1>
+                  <ul>
+                    <li v-for="(item, index) in discList" :key="index"></li>
+                  </ul>
+                </div>
             </div>
         </scroll>
     </div>
@@ -18,7 +24,7 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import Slider from 'base/slider/slider'
-import { getRecommend } from 'api/recommend'
+import { getRecommend, getDiscList } from 'api/recommend'
 import { ERR_OK } from 'api/config'
 export default {
   components: {
@@ -27,20 +33,31 @@ export default {
   },
   data () {
     return {
-      recommends: []
+      recommends: [],
+      discList: []
     }
   },
   methods: {
+    // 轮播
     _getRecommend () {
       getRecommend().then((res) => {
         if (res.code === ERR_OK) {
           this.recommends = res.data.slider
         }
       })
+    },
+    // 歌单
+    _getDiscList () {
+      getDiscList().then((res) => {
+        if (res.cude === ERR_OK) {
+          this.discList = res.data.list
+        }
+      })
     }
   },
   created () {
     this._getRecommend()
+    this._getDiscList()
   }
 }
 </script>
