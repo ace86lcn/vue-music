@@ -16,6 +16,7 @@
                   <h1 class="list-title">热门歌单推荐</h1>
                   <ul>
                     <li v-for="(item, index) in discList" :key="index" class="item">
+<<<<<<< HEAD
                       <div class="icon">
                         <img width="60" height="60" v-lazy="item.imgurl">
                       </div>
@@ -23,12 +24,26 @@
                         <h2 class="name" v-html="item.creator.name"></h2>
                         <p class="desc" v-html="item.dissname"></p>
                       </div>
+=======
+                        <div class="icon">
+                            <img v-lazy="item.imgurl" height="60" width="60">
+                        </div>
+                        <div class="text">
+                            <h2 class="name" v-html="item.creator.name"></h2>
+                            <p class="desc" v-html="item.dissname"></p>
+                        </div>
+>>>>>>> 8bd3f5775dd96258ae450079de764601fa280942
                     </li>
                   </ul>
                 </div>
             </div>
+<<<<<<< HEAD
             <div class="loading-container" v-show="!discList.length">
               <loading></loading>
+=======
+             <div class="loading-container" v-show="!discList.length">
+                <loading></loading>
+>>>>>>> 8bd3f5775dd96258ae450079de764601fa280942
             </div>
         </scroll>
     </div>

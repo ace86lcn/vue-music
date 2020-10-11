@@ -3,6 +3,7 @@
 import fastclick from 'fastclick'
 import Vue from 'vue'
 import App from './App'
+import VueLazyload from 'vue-lazyload'
 import router from './router'
 import 'common/stylus/index.styl'
 import VueLazyload from 'vue-lazyload'
