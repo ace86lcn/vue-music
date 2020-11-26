@@ -1,11 +1,11 @@
 <template>
     <scroll
-    class="listview"
-    :data='data'
-    ref="listview"
+    @scroll="scroll"
     :listen-scroll="listenScroll"
     :probe-type="probeType"
-    @scroll="scroll"
+    :data="data"
+    class="listview"
+    ref="listview"
     >
         <ul>
             <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGroup">
@@ -40,8 +40,6 @@ import { getData } from 'common/js/dom'
 
 const TITLE_HEIGHT = 30
 const ANCHOR_HEIGHT = 18
-
-
 export default {
   components: {
     Scroll,
@@ -120,21 +118,38 @@ export default {
     selectItem (item) {
       this.$emit('select', item)
     },
-    // 点击右侧栏左侧跳转对应
+    // 点击右侧左侧对应滚动
     onShortcutTouchStart (e) {
       let anchorIndex = getData(e.target, 'index')
-      let firseTouch = e.touches[0]
-      this.touch.y1 = firseTouch.pageY                // 记录第一次距离顶部距离
+      let firstTouch = e.touches[0]
+      this.touch.y1 = firstTouch.pageY
       this.touch.anchorIndex = anchorIndex
+
       this._scrollTo(anchorIndex)
     },
-    // 滑动右侧栏左侧跳转对应
+    // 滑动右侧左侧对应滚动
     onShortcutTouchMove (e) {
       let firstTouch = e.touches[0]
       this.touch.y2 = firstTouch.pageY
-      let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0         // 距离除以高度向下取整（math.floor等价于 | 0）
-      let anchorIndex = parseInt(this.touch.anchorIndex) + delta              // this.touch.anchorIndex为字符串需要转化为整型数
+      let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0         // | 0 相当于math.floor向下取整
+      let anchorIndex = parseInt(this.touch.anchorIndex) + delta
+
       this._scrollTo(anchorIndex)
+    },
+    _scrollTo (index) {
+      if (!index && index !== 0) {
+        return
+      }
+      if (index < 0) {
+        index = 0
+      } else if (index > this.listHeight.length - 2) {
+        index = this.listHeight.length - 2
+      }
+      this.scrollY = -this.listHeight[index]
+      this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
+    },
+    refresh () {
+      this.$refs.listview.refresh()
     },
     scroll (pos) {
       this.scrollY = pos.y
@@ -150,18 +165,6 @@ export default {
         height += item.clientHeight
         this.listHeight.push(height)
       }
-    },
-    _scrollTo (index) {
-      if (!index && index !== 0) {
-        return
-      }
-      if (index < 0) {
-        index = 0
-      } else if (index > this.listHeight.length - 2) {
-        index = this.listHeight.length - 2
-      }
-      this.scrollY = -this.listHeight[index]
-      this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)        // 第二个参数为0.表示滚动没有任何动画，立即滚动
     }
   }
 }
