@@ -2,9 +2,13 @@
     <scroll
     class="listview"
     :data='data'
+    ref="listview"
+    :listen-scroll="listenScroll"
+    :probe-type="probeType"
+    @scroll="scroll"
     >
         <ul>
-            <li v-for="(group, index) in data" :key="index" class="list-group">
+            <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGroup">
                 <h2 class="list-group-title">{{group.title}}</h2>
                     <ul>
                         <li v-for="(item, index) in group.items" class="list-group-item" :key="index">
@@ -14,18 +18,150 @@
                     </ul>
             </li>
         </ul>
+        <div class="list-shortcut" @touchstart.stop.prevent="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove"    @touchend.stop
+          >
+          <ul>
+            <li v-for="(item, index) in shortcutList" :key="index" :data-index="index" class="item" :class="  {'current':currentIndex===index}">{{item}}
+            </li>
+          </ul>
+        </div>
+        <div class="list-fixed" ref="fixed" v-show="fixedTitle">
+          <div class="fixed-title">{{fixedTitle}} </div>
+        </div>
+        <div v-show="!data.length" class="loading-container">
+          <loading></loading>
+        </div>
     </scroll>
 </template>
 <script>
 import Scroll from 'base/scroll/scroll'
+import Loading from 'base/loading/loading'
+import { getData } from 'common/js/dom'
+
+const TITLE_HEIGHT = 30
+const ANCHOR_HEIGHT = 18
+
+
 export default {
   components: {
-    Scroll
+    Scroll,
+    Loading
   },
   props: {
     data: {
       type: Array,
       defaule: []
+    }
+  },
+  data () {
+    return {
+      scrollY: -1,
+      currentIndex: 0,            // 当前显示所在的下标
+      diff: -1                   // 表示滚动上限与滚动区块的位置差
+    }
+  },
+  computed: {
+    shortcutList () {
+      return this.data.map((group) => {
+        return group.title.substr(0, 1)
+      })
+    },
+    fixedTitle () {
+      if (this.scrollY > 0) {
+        return ''
+      }
+      return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
+    }
+  },
+  created () {
+    this.probeType = 3
+    this.listenScroll = true
+    this.touch = {}
+    this.listHeight = []
+  },
+  watch: {
+    // 数据更新到页面更新大概需要17秒，这里设置一个延迟效果
+    data () {
+      setTimeout(() => {
+        this._calculateHeight()
+      }, 20)
+    },
+    scrollY (newY) {
+      const listHeight = this.listHeight
+      // 当滚动到顶部，newY>0
+      if (newY > 0) {
+        this.currentIndex = 0
+        return
+      }
+      // 在中间部分滚动
+      for (let i = 0; i < listHeight.length - 1; i++) {
+        let height1 = listHeight[i]
+        let height2 = listHeight[i + 1]
+        if (-newY >= height1 && -newY <= height2) {
+          this.currentIndex = i
+          this.diff = height2 + newY
+          return
+        }
+      }
+      // 当滚动到底部，且-newY大于最后一个元素的上限
+      this.currentIndex = listHeight.length - 2           // 减2是因为不超过最后一个元素
+    },
+    // 监听滚动时每一个group过度的动画效果
+    diff (newVal) {
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      if (this.fixedTop === fixedTop) {
+        return
+      }
+      this.fixedTop = fixedTop
+      this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`
+    }
+  },
+  methods: {
+    selectItem (item) {
+      this.$emit('select', item)
+    },
+    // 点击右侧栏左侧跳转对应
+    onShortcutTouchStart (e) {
+      let anchorIndex = getData(e.target, 'index')
+      let firseTouch = e.touches[0]
+      this.touch.y1 = firseTouch.pageY                // 记录第一次距离顶部距离
+      this.touch.anchorIndex = anchorIndex
+      this._scrollTo(anchorIndex)
+    },
+    // 滑动右侧栏左侧跳转对应
+    onShortcutTouchMove (e) {
+      let firstTouch = e.touches[0]
+      this.touch.y2 = firstTouch.pageY
+      let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0         // 距离除以高度向下取整（math.floor等价于 | 0）
+      let anchorIndex = parseInt(this.touch.anchorIndex) + delta              // this.touch.anchorIndex为字符串需要转化为整型数
+      this._scrollTo(anchorIndex)
+    },
+    scroll (pos) {
+      this.scrollY = pos.y
+    },
+    // 计算高度
+    _calculateHeight () {
+      this.listHeight = []
+      const list = this.$refs.listGroup
+      let height = 0
+      this.listHeight.push(height)
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        height += item.clientHeight
+        this.listHeight.push(height)
+      }
+    },
+    _scrollTo (index) {
+      if (!index && index !== 0) {
+        return
+      }
+      if (index < 0) {
+        index = 0
+      } else if (index > this.listHeight.length - 2) {
+        index = this.listHeight.length - 2
+      }
+      this.scrollY = -this.listHeight[index]
+      this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)        // 第二个参数为0.表示滚动没有任何动画，立即滚动
     }
   }
 }
