@@ -54,8 +54,8 @@ export default {
   data () {
     return {
       scrollY: -1,
-      currentIndex: 0,            // 当前显示所在的下标
-      diff: -1                   // 表示滚动上限与滚动区块的位置差
+      currentIndex: 0, // 当前显示所在的下标
+      diff: -1 // 表示滚动上限与滚动区块的位置差
     }
   },
   computed: {
@@ -102,7 +102,7 @@ export default {
         }
       }
       // 当滚动到底部，且-newY大于最后一个元素的上限
-      this.currentIndex = listHeight.length - 2           // 减2是因为不超过最后一个元素
+      this.currentIndex = listHeight.length - 2 // 减2是因为不超过最后一个元素
     },
     // 监听滚动时每一个group过度的动画效果
     diff (newVal) {
@@ -131,7 +131,7 @@ export default {
     onShortcutTouchMove (e) {
       let firstTouch = e.touches[0]
       this.touch.y2 = firstTouch.pageY
-      let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0         // | 0 相当于math.floor向下取整
+      let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0 // | 0 相当于math.floor向下取整
       let anchorIndex = parseInt(this.touch.anchorIndex) + delta
 
       this._scrollTo(anchorIndex)
