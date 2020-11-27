@@ -21,6 +21,7 @@ export function getData (el, name, val) {
   return el.getAttribute(prefix + name)
 }
 
+// 兼容各个浏览器
 let elementStyle = document.createElement('div').style
 
 let vendor = (() => {

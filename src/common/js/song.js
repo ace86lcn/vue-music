@@ -1,9 +1,6 @@
-import {getLyric} from 'api/song'
-import {ERR_OK} from 'api/config'
-import {Base64} from 'js-base64'
-
+// 创建一个类实例
 export default class Song {
-  constructor({id, mid, singer, name, album, duration, image, url}) {
+  constructor({ id, mid, singer, name, album, duration, image, url }) {
     this.id = id
     this.mid = mid
     this.singer = singer
@@ -13,25 +10,9 @@ export default class Song {
     this.image = image
     this.url = url
   }
-
-  getLyric() {
-    if (this.lyric) {
-      return Promise.resolve(this.lyric)
-    }
-
-    return new Promise((resolve, reject) => {
-      getLyric(this.mid).then((res) => {
-        if (res.retcode === ERR_OK) {
-          this.lyric = Base64.decode(res.lyric)
-          resolve(this.lyric)
-        } else {
-          reject('no lyric')
-        }
-      })
-    })
-  }
 }
 
+// 工厂模式
 export function createSong(musicData) {
   return new Song({
     id: musicData.songid,
@@ -45,6 +26,7 @@ export function createSong(musicData) {
   })
 }
 
+// 创建一个方法，拼接名称
 function filterSinger(singer) {
   let ret = []
   if (!singer) {
@@ -55,4 +37,3 @@ function filterSinger(singer) {
   })
   return ret.join('/')
 }
-
