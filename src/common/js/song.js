@@ -1,3 +1,6 @@
+import {getLyric} from 'api/song'
+import {ERR_OK} from 'api/config'
+
 // 创建一个类实例
 export default class Song {
   constructor({ id, mid, singer, name, album, duration, image, url }) {
@@ -9,6 +12,29 @@ export default class Song {
     this.duration = duration
     this.image = image
     this.url = url
+  }
+
+  // 获取歌词接口
+  // getLyric() {
+  //   if (this.lyric) {
+  //     return Promise.resolve(this.lyric)
+  //   }
+
+  //   return new Promise((resolve, reject) => {
+  //     getLyric(this.mid).then((res) => {
+  //       if (res.retcode === ERR_OK) {
+  //         console.log(this.lyric)
+  //       }
+  //     })
+  //   })
+  // }
+  getLyric() {
+    getLyric(this.mid).then((res) => {
+      if (res.retcode === ERR_OK) {
+        this.lyric = res.lyric
+        console.log(this.lyric)
+      }
+    })
   }
 }
 
