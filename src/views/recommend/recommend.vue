@@ -39,7 +39,10 @@ import Slider from 'base/slider/slider'
 import Loading from 'base/loading/loading'
 import { getRecommend, getDiscList } from 'api/recommend'
 import { ERR_OK } from 'api/config'
+import { playlistMixin } from 'common/js/mixin'
+
 export default {
+  mixins: [playlistMixin],
   components: {
     Scroll,
     Slider,
@@ -52,6 +55,12 @@ export default {
     }
   },
   methods: {
+    // 页面距离底部播放器
+    handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scroll.refresh()
+    },
     // 轮播
     _getRecommend () {
       getRecommend().then((res) => {
