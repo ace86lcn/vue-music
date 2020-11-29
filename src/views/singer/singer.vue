@@ -1,3 +1,4 @@
+
 <template>
     <div class="singer" ref="singer">
         <list-view :data="singerList" @select="selectSinger" ref="list"></list-view>
