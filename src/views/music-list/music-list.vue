@@ -30,12 +30,13 @@
 import SongList from 'base/song-list/song-list'
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
-
+import {playlistMixin} from 'common/js/mixin'
 import { mapActions } from 'vuex'
 
 const RESERVED_HEIGHT = 40
 
 export default {
+  mixins: [playlistMixin],
   components: {
     SongList,
     Scroll,
@@ -77,6 +78,12 @@ export default {
     this.minTransalteY = -this.imageHeight + RESERVED_HEIGHT
   },
   methods: {
+    // 页面距离底部播放器
+    handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.list.$el.style.bottom = bottom
+      this.$refs.list.refresh()
+    },
     // 返回
     back() {
       this.$router.back()
