@@ -30,7 +30,7 @@ export default {
     // 页面距离底部播放器
     handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
-      this.$refs.singer.$el.style.bottom = bottom
+      this.$refs.singer.style.bottom = bottom
       this.$refs.list.refresh()
     },
     // 歌手列表
@@ -102,8 +102,8 @@ export default {
 </script>
 <style lang="stylus" scoped>
     .singer
-        position fixed
-        top 88px
-        bottom 0
-        width 100%
+        position: fixed
+        top: 88px
+        bottom: 0
+        width: 100%
 </style>
