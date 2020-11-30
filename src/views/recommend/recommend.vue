@@ -65,8 +65,6 @@ export default {
     },
     // 点击热门歌单跳转到歌单页面
     selectItem(item) {
-      console.log(111)
-      console.log(item)
       this.$router.push({
         path: `/recommend/${item.dissid}`
       })
