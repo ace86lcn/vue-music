@@ -34,7 +34,7 @@ export function getDiscList () {
   })
 }
 
-// 获取歌单列表
+// 获取歌单列表(有问题)
 export function getSongList (disstid) {
   const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
 
