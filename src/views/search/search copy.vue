@@ -35,16 +35,16 @@
 </template>
 
 <script type="text/ecmascript-6">
-
 import SearchBox from 'base/search-box/search-box'
-import Scroll from 'base/scroll/scroll'
 import SearchList from 'base/search-list/search-list'
+import Scroll from 'base/scroll/scroll'
 import Confirm from 'base/confirm/confirm'
 import Suggest from 'views/suggest/suggest'
 import {getHotKey} from 'api/search'
 import {ERR_OK} from 'api/config'
 import {playlistMixin, searchMixin} from 'common/js/mixin'
 import {mapActions} from 'vuex'
+
 export default {
   mixins: [playlistMixin, searchMixin],
   components: {
@@ -54,7 +54,7 @@ export default {
     Confirm,
     Suggest
   },
-  data () {
+  data() {
     return {
       hotKey: []
     }
@@ -78,11 +78,9 @@ export default {
       this.$refs.shortcutWrapper.style.bottom = bottom
       this.$refs.shortcut.refresh()
     },
-    // 弹窗
     showConfirm() {
       this.$refs.confirm.show()
     },
-    // 热门数据
     _getHotKey() {
       getHotKey().then((res) => {
         if (res.code === ERR_OK) {
